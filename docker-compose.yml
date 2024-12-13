@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  postgres_db:
+    image: postgres:17-alpine
+    container_name: pg_db
+    environment:
+      POSTGRES_DB: "pg_db"
+      POSTGRES_USER: "egor"
+      POSTGRES_PASSWORD: "root123"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      USER: "egor"
+      PASSWORD: "root123"
+      SERVER: "postgres_db"
+      DATABASE: "pg_db"
+      PORT: 5432
+      APP_HOST: 0.0.0.0
+      APP_PORT: 5000
+    ports:
+      - '5000:5000'
+    volumes:
+      - static_volume:/app/static
+      - .:/app
+    depends_on:
+      - postgres_db
+    
+
+
+volumes:
+  pg_data:
+  static_volume:

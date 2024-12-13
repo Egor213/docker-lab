@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Docker lab</title>
+    <script>
+        const appHost = "{{ app_host }}";  
+        const appPort = "{{ app_port }}";  
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const taskInput = document.getElementById("taskInput");
+            const taskText = taskInput.value.trim();
+            if (taskText) {
+                try {
+                    const response = await fetch(`http://${appHost}:${appPort}/`, {  
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ task: taskText }),
+                    });
+                } catch (error) {
+                    console.error("Error sending task:", error);
+                } finally {
+                    taskInput.value = "";
+                }
+            }
+        }
+
+        async function loadTasks() {
+            try {
+                const response = await fetch(`http://${appHost}:${appPort}/tasks`, {  
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                const data = await response.json();
+                const taskList = document.getElementById("taskList");
+                taskList.innerHTML = ""; 
+                if (data.tasks && data.tasks.length > 0) {
+                    data.tasks.forEach(task => {
+                        const taskItem = document.createElement("div");
+                        taskItem.textContent = `Task ID: ${task.id}, Task Name: ${task.name}`;
+                        taskList.appendChild(taskItem);
+                    });
+                } else {
+                    taskList.innerHTML = "No tasks found.";
+                }
+            } catch (error) {
+                console.error("Error loading tasks:", error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="header-title">
+        Task list
+    </div>
+
+    <div class="input-task">
+        <form id="taskForm" onsubmit="handleSubmit(event)">
+            <input type="text" id="taskInput" placeholder="Enter new task" name="taskText">
+            <input type="submit" value="Add Task" id="submitTask">
+        </form>
+    </div>
+
+    <div class="get-tasks-button">
+        <button onclick="loadTasks()">Load All Tasks</button>
+    </div>
+
+    <div class="list-tasks" id="taskList">
+    </div>
+</body>
+</html>
