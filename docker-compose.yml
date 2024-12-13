@@ -32,6 +32,7 @@ services:
       - .:/app
     depends_on:
       - postgres_db
+    restart: on-failure:3
     
 
 
