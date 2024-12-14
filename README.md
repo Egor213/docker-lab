@@ -1,5 +1,11 @@
 # Docker Lab
-
+Для запуска:
+```
+git clone https://github.com/Egor213/docker-lab.git
+```
+```
+docker-compose up
+```
 ## Задание
 Цель лабораторной работы: собрать из исходного кода и запустить в Docker рабочее приложение с базой данных (любое open-source на выбор: Java, Python/Django/Flask, Golang).
 
